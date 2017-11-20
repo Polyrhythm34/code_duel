@@ -9,6 +9,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+app.io = require('socket.io')();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,6 +25,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+
+var numUsers = 0;
+app.io.on('connection', function(socket) {
+  numUsers++;
+  console.log(app.io.username + ' connected (' + numUsers + ')');
+  // receive from client (index.ejs) with socket.on
+  socket.on('new message', function(msg) {
+    console.log('new message: ' + msg);
+
+    // send to client (index.ejs) with app.io.emit
+    // here it reacts direct after receiving a message from the client
+    app.io.emit('chat message', msg);
+  });
+  socket.on('disconnect', function() {
+    --numUsers;
+    console.log(app.io.username + ' disconnected (' + numUsers + ')');
+
+  });
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -42,5 +62,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
 
 module.exports = app;
