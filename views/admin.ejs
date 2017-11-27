@@ -54,7 +54,7 @@
             </div>
           </div>
           
-         <!-- Add Modal -->
+         <!-- Edit Modal -->
           <div class="modal fade" id="editModal<%=source._id%>" role="dialog">
             <div class="modal-dialog">
         
@@ -68,7 +68,7 @@
                     <div class="form-group">
                       <input class="form-control" type="text" name="_id" value="<%=source._id%>"/>
                       <label for="code"><span class="glyphicon glyphicon-user"></span> Script</label>
-                      <textarea class="form-control" name="code"><%=source.code%></textarea>
+                      <textarea rows ="10" class="form-control" name="code"><%=source.code%></textarea>
                     </div>
                     <button type="submit" class="btn btn-default btn-success btn-block" ><span class="glyphicon glyphicon-off"></span>Edit Script</button>
                   </form>
@@ -99,7 +99,7 @@
           <form role="form" action="/admin/save" method="post">
             <div class="form-group">
               <label for="code"><span class="glyphicon glyphicon-user"></span> Script</label>
-              <textarea class="form-control" name="code" placeholder="Script goes here"></textarea>
+              <textarea rows="10" class="form-control" name="code" placeholder="Script goes here"></textarea>
             </div>
             <button type="submit" class="btn btn-default btn-success btn-block" ><span class="glyphicon glyphicon-off"></span>Add Script</button>
           </form>
@@ -110,9 +110,6 @@
       </div>
     </div>
   </div> 
-
-  
-
  </body>
  <footer>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

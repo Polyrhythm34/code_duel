@@ -4,23 +4,27 @@
     <link rel='stylesheet' href='/stylesheets/style.css' /> 
 </head>  
 
-<body id="index" onload="startGame()">
-    <div class="container">
-    <h1><%= title %></h1>
-    <h3>Welcome to <%= title %></h3>
-    <canvas id="gamespace"></canvas>
-    <ul id="messages-area"></ul>
-    <form id="form" onsubmit="return false;">
-        <input id="new-message" type="text" /><button onclick="sendFunction()">Send</button>
-    </form>
+<body id="index">
+    <div class="container" >
+        <img src="images/logo.png"></img>
+        <div class="row">
+            <div class="col">
+                <canvas id="gamespace" tabindex="0" ></canvas>
+            </div>
+            <div class="col" id="userlist">
+                <h4>USERS ONLINE</h4>
+                <ul class='list-group' id="users"></ul>
+            </div>
+        </div>
+       
     </div>
-    <p id="demo"></p>
+    <div id='placeholder'></div>
 </body>
 <footer>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
- 
+    <script src="/javascripts/CanvasInput.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/javascripts/handler.js"></script>
 </footer>

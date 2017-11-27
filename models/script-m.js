@@ -51,7 +51,7 @@ exports.getScriptInfo = (id) => {
 
 exports.create = (code) => {
   return exports.connectDB()
-  .then((db) => {;
+  .then((db) => {
       var script = new Script(code);
       var collection = db.collection('scripts');
       return collection.insertOne(script)

@@ -3,12 +3,30 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+@media (min-width: 1200px) {
+    .container{
+        max-width: 1500px;
+    }
+}
 a {
   color: #00B7FF;
 }
 #index {
-  background-color: lightblue;
+  background-color: #4767d8;
 }
+
 #gamespace {
   border: 1px solid #000000;
+}
+
+#userlist {
+  border: 1px solid #000000;
+  background-color: white;
+  padding: 30px;
+}
+
+#logonform {
+  border: 1px solid #000000;
+  background-color: white;
+  padding: 30px;
 }

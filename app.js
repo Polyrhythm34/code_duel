@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var gameBrain = require('./models/game-brain');
 
 var index = require('./routes/index');
 var admin = require('./routes/admin');
@@ -26,22 +27,38 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/admin', admin);
 
-var numUsers = 0;
 app.io.on('connection', function(socket) {
-  numUsers++;
-  console.log(app.io.username + ' connected (' + numUsers + ')');
-  // receive from client (index.ejs) with socket.on
-  socket.on('new message', function(msg) {
-    console.log('new message: ' + msg);
-
-    // send to client (index.ejs) with app.io.emit
-    // here it reacts direct after receiving a message from the client
-    app.io.emit('chat message', msg);
+  
+  
+  app.io.to(socket.id).emit('receive user id', socket.id);
+  console.log(socket.id + ' connected (' + gameBrain.userConnect(socket.id) + ')');
+  app.io.emit('update users', gameBrain.getUsers());
+  socket.on('have typed', function(msg, userid) {
+    console.log('have typed: ' + msg);
+    app.io.to(userid).emit('have typed message', msg);
+  });
+  socket.on('to type', function(msg, userid) {
+    console.log('to type: ' + msg);
+    app.io.to(userid).emit('to type message', msg);
+  });
+  socket.on('challenge', function(msg) {
+    app.io.to(msg).emit('you have been challenged', socket.id);
+  });
+  socket.on('accept challenge', function(msg){
+    gameBrain.randomScript().then((randomScript) => {
+      app.io.to(socket.id).emit('sending script', randomScript);
+      app.io.to(msg).emit('sending script', randomScript);
+  }).then(() => {
+      app.io.to(msg).emit('challenge accepted', socket.id);
+      app.io.to(socket.id).emit('challenge accepted', msg);
+    });
+  });
+  socket.on('denied challenge', function(msg){
+    app.io.to(msg).emit('challenge denied', socket.id);
   });
   socket.on('disconnect', function() {
-    --numUsers;
-    console.log(app.io.username + ' disconnected (' + numUsers + ')');
-
+    console.log(socket.id + ' disconnected (' + gameBrain.userDisconnect(socket.id) + ')');
+    app.io.emit('update users', gameBrain.getUsers());
   });
 });
 
