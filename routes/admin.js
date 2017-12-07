@@ -22,7 +22,7 @@ router.post('/save', function(req, res, next) {
             // An update
             save = scripts.update(
                 req.body._id,
-                req.body.code);
+                req.body.username);
         }
         else {
             // A create

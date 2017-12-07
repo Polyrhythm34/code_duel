@@ -3,6 +3,11 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+@font-face {
+    font-family: wildbunch;
+    src: url(wildbunch.otf);
+}
+
 @media (min-width: 1200px) {
     .container{
         max-width: 1500px;

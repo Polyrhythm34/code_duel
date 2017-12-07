@@ -28,10 +28,17 @@ app.use('/', index);
 app.use('/admin', admin);
 
 app.io.on('connection', function(socket) {
-  
-  
   app.io.to(socket.id).emit('receive user id', socket.id);
-  console.log(socket.id + ' connected (' + gameBrain.userConnect(socket.id) + ')');
+  socket.on("sign in", function(username, password) {
+    gameBrain.userConnect(username, password, socket.id).then((userConnect) => {
+      if(userConnect) {
+        socket.name = username;
+        console.log(socket.name + ' connected');
+        app.io.to(socket.id).emit('log in success');
+        app.io.emit('update users', gameBrain.getUsers());
+      }
+    });
+  });
   app.io.emit('update users', gameBrain.getUsers());
   socket.on('have typed', function(msg, userid) {
     console.log('have typed: ' + msg);
@@ -42,23 +49,34 @@ app.io.on('connection', function(socket) {
     app.io.to(userid).emit('to type message', msg);
   });
   socket.on('challenge', function(msg) {
-    app.io.to(msg).emit('you have been challenged', socket.id);
+    app.io.to(msg).emit('you have been challenged', socket.id, socket.name);
   });
-  socket.on('accept challenge', function(msg){
+  socket.on('accept challenge', function(msg, name){
     gameBrain.randomScript().then((randomScript) => {
       app.io.to(socket.id).emit('sending script', randomScript);
       app.io.to(msg).emit('sending script', randomScript);
   }).then(() => {
-      app.io.to(msg).emit('challenge accepted', socket.id);
-      app.io.to(socket.id).emit('challenge accepted', msg);
+      console.log("socket:" + socket.name + " name:" + name);
+      app.io.to(msg).emit('challenge accepted', socket.id, socket.name);
+      app.io.to(socket.id).emit('challenge accepted', msg, name);
+      app.io.emit('update users', gameBrain.getUsers());
     });
+  });
+  socket.on('update after game', function() {
+    app.io.emit('update users', gameBrain.getUsers());
   });
   socket.on('denied challenge', function(msg){
     app.io.to(msg).emit('challenge denied', socket.id);
   });
+  socket.on('win', function(userid){
+    app.io.to(userid).emit('opponent win');
+  });
+  socket.on('update gunfighter', function(index, userid){
+    app.io.to(userid).emit('gunfighter update', index);
+  });
   socket.on('disconnect', function() {
     console.log(socket.id + ' disconnected (' + gameBrain.userDisconnect(socket.id) + ')');
-    app.io.emit('update users', gameBrain.getUsers());
+    app.io.emit('update users', gameBrain.getUsers(), socket.uname);
   });
 });
 
@@ -79,7 +97,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-
 
 module.exports = app;
