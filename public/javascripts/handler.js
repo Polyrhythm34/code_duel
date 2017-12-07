@@ -8,6 +8,7 @@ var socket = io();
 var canvasWidth = 1000;
 var canvasHeight = 800;
 var mouse = {};
+var game = {};
 var keyPressed;
 var newGame;
 var frameNo = 0;
@@ -33,7 +34,7 @@ var startSeconds;
 var audio = new Audio('sounds/gunshot.wav');
 
 var bgImage = new Image();
-bgImage.src = "/images/town.jpg";
+bgImage.src = "/images/cdbg.png";
 
 var loginButton = new Image();
 loginButton.src = "/images/login.png";
@@ -132,8 +133,6 @@ socket.on('opponent win', function(){
     notice.text = opponentName + ' has won!'
     audio.play();
     newGame = false;
-    clearInterval(canvas.interval);
-    setTimeout(restart, 4000);
     socket.emit('update after game');
 });
 
@@ -179,7 +178,14 @@ socket.on('log in success', function() {
    
     loginButton.flag = false;
 });
+
+socket.on('log in fail', function() {
+    alert('Username and password do not match. ');
+});
 function restart() {
+    gunfighterindex = 0;
+    opponentgunfighterindex = 0;
+    clearInterval(game.interval);
     loggedin = true;
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     context.drawImage(bgImage, 0, 0, canvasWidth, canvasHeight);
@@ -262,6 +268,7 @@ function createModal(user) {
 }
 
 function startGame() {
+    winner = false;
     newGame = true;
     toType.text = randomScript;
     opponentType.text = randomScript;
@@ -286,7 +293,7 @@ function startGame() {
     countdown = true;
     startSeconds = 0;
     seconds = 0;
-    setInterval(incSeconds, 1000);
+    game.interval = setInterval(incSeconds, 1000);
     canvas.interval = setInterval(updateGameArea, 20);
 }
 
@@ -461,8 +468,6 @@ function updateGameArea() {
         socket.emit("win", opponentid);
         audio.play();
         notice.text = "You have won!";
-        clearInterval(canvas.interval);
-        setTimeout(restart, 4000);
         newGame = false;
     }
     
@@ -475,6 +480,10 @@ function updateGameArea() {
     
     if (winner || countdown) { 
         notice.update();
+    }
+    if (winner) {
+        clearInterval(canvas.interval);
+        setTimeout(restart, 4000);
     }
     toType.update();
     haveTyped.update();

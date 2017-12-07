@@ -36,6 +36,8 @@ app.io.on('connection', function(socket) {
         console.log(socket.name + ' connected');
         app.io.to(socket.id).emit('log in success');
         app.io.emit('update users', gameBrain.getUsers());
+      } else {
+        app.io.to(socket.id).emit('log in fail');
       }
     });
   });
